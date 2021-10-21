@@ -1,7 +1,8 @@
 const puppeteer = require('puppeteer');
+const sessionFactory = require('./factories/sessionFactory');
+const userFactory = require('./factories/userFactory');
 
 let browser, page;
-
 beforeEach(async () => {
     browser = await puppeteer.launch({
         // headless: false // UI
@@ -21,6 +22,20 @@ test('Clicking the "log in" starts logIn flow', async () => {
     const pageUrl = await page.url();
 
     expect(pageUrl).toMatch(`/${expectedUrlPart}/`);
+});
+
+test('When signed in show logOut button', async () => {
+    const user = await userFactory();
+    const {sessionString, sig} = sessionFactory(user);
+
+    await page.setCookie({name: 'session.sig', value: sig});
+    await page.setCookie({name: 'session', value: sessionString});
+
+    await page.goto('http://localhost:3000');
+    await page.waitFor('a[href="/auth/logout"]');
+    const buttonText = await page.$eval('a[href="/auth/logout"]', el => el.innerHTML);
+
+    expect(buttonText).toEqual('Logout')
 });
 
 afterEach(async () => {
