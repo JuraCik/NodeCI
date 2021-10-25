@@ -57,6 +57,44 @@ describe('When logged in', async () => {
     });
 });
 
+describe('When are not logged in', async () => {
+
+    test('Should return 401 on create blog request', async () => {
+
+        const createBlogResp = await page.evaluate(() => {
+            return fetch('/api/blogs/', {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    title: 'Title here',
+                    content: 'Content here',
+                }),
+            }).then(res => res.json());
+        });
+
+        expect(createBlogResp).toHaveProperty('error');
+        expect(createBlogResp.error).toEqual('You must log in!');
+    });
+    test('Should return 401 on get blogs request', async () => {
+
+        const getBlogResp = await page.evaluate(() => {
+            return fetch('/api/blogs/', {
+                method: 'GET',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }).then(res => res.json());
+        });
+
+        expect(getBlogResp).toHaveProperty('error');
+        expect(getBlogResp.error).toEqual('You must log in!');
+    });
+});
+
 afterEach(async () => {
     await page.close();
 });
