@@ -31,8 +31,33 @@ class CustomPage {
         await this.page.waitFor('a[href="/auth/logout"]');
     }
 
-    async getContentsOf(selector){
+    async getContentsOf(selector) {
         return await this.page.$eval(selector, el => el.innerHTML);
+    }
+
+    get(path) {
+        return this.page.evaluate(({path}) => {
+            return fetch(path, {
+                method: 'GET',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }).then(res => res.json());
+        }, {path});
+    }
+
+    post(path, data) {
+        return this.page.evaluate(({path, data}) => {
+            return fetch(path, {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            }).then(res => res.json());
+        }, {path, data});
     }
 }
 
