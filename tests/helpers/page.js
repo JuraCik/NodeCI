@@ -25,6 +25,9 @@ class CustomPage {
         const user = await userFactory();
         const {sessionString, sig} = sessionFactory(user);
 
+        console.log('sessionString', sessionString);
+        console.log('sig', sig);
+
         await this.page.setCookie({name: 'session.sig', value: sig});
         await this.page.setCookie({name: 'session', value: sessionString});
 
