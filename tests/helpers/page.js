@@ -28,8 +28,8 @@ class CustomPage {
         console.log('sessionString', sessionString);
         console.log('sig', sig);
 
-        await this.page.setCookie({name: 'session.sig', value: sig});
-        await this.page.setCookie({name: 'session', value: sessionString});
+        await this.page.setCookie({name: 'session.sig', value: sig, domain: 'localhost'});
+        await this.page.setCookie({name: 'session', value: sessionString, domain: 'localhost'});
 
         await this.page.goto('http://localhost:3000/blogs');
         await this.page.waitFor('a[href="/auth/logout"]');
